@@ -51,6 +51,7 @@ function App() {
       }
     }
 
+    // Cargar datos automáticamente al inicio
     loadAllData();
   }, [dispatch]);
 

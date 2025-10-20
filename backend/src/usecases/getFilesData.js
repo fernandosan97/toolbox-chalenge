@@ -1,4 +1,5 @@
-const { fetchFileList, fetchFileContent, parseCsvContent } = require('../services/externalApiService');
+const { fetchFileList, fetchFileContent } = require('../services/externalApiService');
+const { parseCsvContent } = require('../shared/csvParserService');
 
 async function getFilesData({ fileName } = {}) {
   const list = await fetchFileList();
