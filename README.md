@@ -185,15 +185,15 @@ npm test
 ```
 
 Los tests incluyen:
-- Tests unitarios para servicios
-- Tests de integración para controladores
-- Mocks de la API externa
+- Tests de integración para endpoints completos
+- Mocks de la API externa usando nock
+- Validación de respuestas y parámetros de query
 
 ### Estructura de Tests
 
 ```
 backend/test/
-└── files.test.js    # Tests de endpoints y funcionalidad
+└── files.test.js    # Tests de integración para endpoints /files/list y /files/data
 ```
 
 ## Desarrollo
