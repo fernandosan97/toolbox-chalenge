@@ -120,9 +120,6 @@ cd backend
 # Instalar dependencias
 npm install
 
-# Ejecutar en modo desarrollo
-npm start
-
 # Ejecutar tests
 npm test
 ```
@@ -135,12 +132,31 @@ cd client
 
 # Instalar dependencias
 npm install
-
-# Ejecutar en modo desarrollo
-npm start
 ```
 
+## Ejecución
+
+### Ejecución Manual (Desarrollo)
+
+Para desarrollo local, necesitas ejecutar backend y frontend por separado:
+
+#### Terminal 1 - Backend
+```bash
+cd backend
+npm start
+```
+El backend estará disponible en: http://localhost:3000
+
+#### Terminal 2 - Frontend
+```bash
+cd client
+npm start
+```
+El frontend estará disponible en: http://localhost:8080
+
 ### Ejecución con Docker
+
+Para ejecutar toda la aplicación con Docker:
 
 ```bash
 # Construir y ejecutar todos los servicios
