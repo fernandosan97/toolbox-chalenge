@@ -1,62 +1,85 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Container, Row, Col, Spinner, Alert } from 'react-bootstrap';
+import { useSelector, useDispatch } from 'react-redux';
 import FileSelector from './components/FileSelector';
 import FileTable from './components/FileTable';
 import { listFiles, fetchData } from './api';
+import {
+  setFiles,
+  setFilesLoading,
+  setFilesError,
+  setSelectedFile,
+  setData,
+  setDataLoading,
+  setDataError,
+  clearAllErrors
+} from './store';
 
 function App() {
-  const [files, setFiles] = useState([]);
-  const [selectedFile, setSelectedFile] = useState('');
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
+  const { files, loading: filesLoading, error: filesError } = useSelector(state => state.files);
+  const { data, selectedFile, loading: dataLoading, error: dataError } = useSelector(state => state.data);
 
   useEffect(() => {
-    let mounted = true;
-
     async function loadFiles() {
       try {
-        const json = await listFiles();
-        if (mounted) setFiles(json.files || []);
-      } catch (err) {
-        if (mounted) setError(`Error loading files: ${err.message}`);
+        dispatch(setFilesLoading(true));
+        dispatch(setFilesError(null));
+        const response = await listFiles();
+        dispatch(setFiles(response.files || []));
+      } catch (error) {
+        dispatch(setFilesError(`Error loading files: ${error.message}`));
+      } finally {
+        dispatch(setFilesLoading(false));
       }
     }
 
     loadFiles();
-    return () => { mounted = false; };
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
-    let mounted = true;
-
     async function loadAllData() {
       try {
-        const json = await fetchData('');
-        if (mounted) setData(json);
-      } catch (err) {
-        if (mounted) setError(`Error loading data: ${err.message}`);
+        dispatch(setDataLoading(true));
+        dispatch(setDataError(null));
+        const response = await fetchData('');
+        dispatch(setData(response));
+      } catch (error) {
+        dispatch(setDataError(`Error loading data: ${error.message}`));
+      } finally {
+        dispatch(setDataLoading(false));
       }
     }
 
     loadAllData();
-    return () => { mounted = false; };
-  }, []);
+  }, [dispatch]);
 
-  async function loadData(e) {
-    e && e.preventDefault();
-    console.log('Loading data for file:', selectedFile, e);
-    setLoading(true);
-    setError(null);
-    try {
-      const json = await fetchData(selectedFile);
-      setData(json);
-    } catch (err) {
-      setError(err.message);
-      setData([]);
-    } finally {
-      setLoading(false);
+  function handleFileChange(fileName) {
+    dispatch(setSelectedFile(fileName));
+    // Limpiar errores cuando se cambia de archivo
+    if (filesError || dataError) {
+      dispatch(clearAllErrors());
     }
+  }
+
+  async function handleLoadData(e) {
+    e && e.preventDefault();
+
+    try {
+      dispatch(setDataLoading(true));
+      dispatch(setDataError(null));
+      const response = await fetchData(selectedFile);
+      dispatch(setData(response));
+    } catch (error) {
+      dispatch(setDataError(error.message));
+      dispatch(setData([]));
+    } finally {
+      dispatch(setDataLoading(false));
+    }
+  }
+
+  function handleClearError() {
+    dispatch(clearAllErrors());
   }
 
   return (
@@ -73,17 +96,21 @@ function App() {
           <FileSelector
             files={files}
             selectedFile={selectedFile}
-            onChange={setSelectedFile}
-            onLoad={loadData}
+            onChange={handleFileChange}
+            onLoad={handleLoadData}
           />
         </Col>
       </Row>
 
       <Row>
         <Col>
-          {loading && <div className="text-center"><Spinner animation="border" /></div>}
-          {error && <Alert variant="danger">{error}</Alert>}
-          {!loading && !error && data.length === 0 && <p>No data loaded yet.</p>}
+          {(filesLoading || dataLoading) && <div className="text-center"><Spinner animation="border" /></div>}
+          {(filesError || dataError) && (
+            <Alert variant="danger" dismissible onClose={handleClearError}>
+              {filesError || dataError}
+            </Alert>
+          )}
+          {!filesLoading && !dataLoading && !filesError && !dataError && data.length === 0 && <p>No data loaded yet.</p>}
 
           {data.map(file => (
             <FileTable key={file.file} file={file} />

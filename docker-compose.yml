@@ -11,7 +11,7 @@ services:
       - appnet
   client:
     container_name: client
-    build: ./client'
+    build: ./client
     restart: always
     ports:
       - "8080:8080"
