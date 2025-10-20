@@ -204,18 +204,39 @@ backend/test/
 challenge-node/
 ├── backend/
 │   ├── src/
-│   │   ├── controllers/     # Controladores de endpoints
-│   │   ├── services/        # Servicios externos
-│   │   └── usecases/        # Lógica de negocio
-│   ├── test/               # Tests del backend
+│   │   ├── app.js          # Configuración de Express
+│   │   ├── controllers/    # Controladores de endpoints
+│   │   │   └── filesController.js
+│   │   ├── services/       # Servicios externos
+│   │   │   └── externalApiService.js
+│   │   └── usecases/       # Lógica de negocio
+│   │       ├── getFileList.js
+│   │       └── getFilesData.js
+│   ├── test/              # Tests del backend
+│   │   └── files.test.js
+│   ├── index.js           # Punto de entrada
+│   ├── Dockerfile
 │   └── package.json
 ├── client/
 │   ├── src/
-│   │   ├── components/      # Componentes React
-│   │   ├── store/          # Redux store
-│   │   └── api.js          # Cliente API
+│   │   ├── components/     # Componentes React
+│   │   │   ├── FileSelector.js
+│   │   │   └── FileTable.js
+│   │   ├── store/         # Redux store
+│   │   │   ├── dataSlice.js
+│   │   │   ├── filesSlice.js
+│   │   │   └── index.js
+│   │   ├── api.js         # Cliente API
+│   │   ├── App.js         # Componente principal
+│   │   └── index.js       # Punto de entrada React
+│   ├── public/
+│   │   └── index.html
+│   ├── .babelrc          # Configuración Babel
+│   ├── .nvmrc            # Versión de Node.js
+│   ├── webpack.config.js
+│   ├── Dockerfile
 │   └── package.json
-└── docker-compose.yml      # Configuración Docker
+└── docker-compose.yml     # Configuración Docker
 ```
 
 ### Variables de Entorno
