@@ -10,6 +10,7 @@ async function getFilesData({ fileName } = {}) {
         const content = await fetchFileContent(f);
         return parseCsvContent(content, f);
       } catch (err) {
+        console.error(`Error fetching file ${f}: ${err.message}`);
         return null;
       }
     })
